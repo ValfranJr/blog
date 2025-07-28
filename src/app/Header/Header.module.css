@@ -1,0 +1,30 @@
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem;
+  border-bottom: 1px solid #eaeaea;
+  color: #606060;
+}
+
+.header_nav {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 0.5rem;
+}
+
+.header_nav a {
+  margin-left: 1rem;
+  font-size: 1.2rem;
+  font-weight: bold;
+  text-decoration: none;
+  padding: 0.5rem;
+}
+
+.header_nav a:hover {
+  background-color: #eaeaea;
+  border-radius: 8px;
+  padding: 0.5rem;
+
+}
