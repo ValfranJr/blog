@@ -10,7 +10,6 @@ type Props = {
   };
 };
 
-export const dynamic = "force-dynamic";
 export const revalidate = 60;
 
 export async function generateStaticParams() {
@@ -21,28 +20,25 @@ export async function generateStaticParams() {
   }));
 }
 
-
-export async function generateMetadata({params}: Props) {
-  const artigo = await getArtigoSlug(params.slug);
-  if (!artigo)
-    return;
+export const  generateMetadata = async ({params}: Props) => {
+  const {slug} = await params;
+  const artigo = await getArtigoSlug(slug);
+  if (!artigo) return;
   return {
     title: `${artigo?.title} | Blog News`,
     description: artigo?.description,
     openGraph: {
       title: `${artigo?.title} | Blog News`,
-      description: artigo?.description,
-      images: [
-        {url: artigo?.urlToImage,alt: artigo?.title,
-        },
-      ],
+      description: artigo.description,
+      images: [{ url: artigo?.urlToImage, alt: artigo?.title }],
     },
   };
 }
 
 const DetalheArtigo = async ({ params }: Props) => {
+  const { slug } = await params;
   const artigos = await getTopNoticias();
-  const artigo = artigos.find((a) => gerarSlug(a.title) === params.slug);
+  const artigo = artigos.find((a) => gerarSlug(a.title) === slug);
 
   if (!artigo) return notFound();
 
