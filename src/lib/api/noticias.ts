@@ -1,3 +1,4 @@
+import { gerarSlug } from "../slug/slug";
 import noticiasApi from "./axios";
 import { Artigo } from "@/types/types";
 
@@ -13,8 +14,10 @@ export const getTopNoticias = async () => {
 };
 
 export const getArtigoSlug = async (
-  slug: string
+  slug: string,
+
 ): Promise<Artigo | undefined> => {
-  const artigos = await getTopNoticias();
-  return artigos.find((a) => (a.title) === slug);
+  const artigos =await getTopNoticias()
+
+  return artigos.find((a) => a.title && gerarSlug(a.title) === slug);
 };
