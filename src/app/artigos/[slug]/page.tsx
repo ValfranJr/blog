@@ -5,9 +5,9 @@ import { notFound } from "next/navigation";
 import styles from "./slug.module.css";
 
 type Props = {
-  params: {
+  params: Promise<{
     slug: string;
-  };
+  }>;
 };
 
 export const revalidate = 60;
