@@ -5,9 +5,7 @@ export default async function Home() {
   const artigos = await getTopNoticias();
   return (
     <>
-      <Grid
-        artigos= {artigos}
-      />
+      <Grid artigos={artigos} titulo="Últimas notícias"/>
     </>
   );
 }
