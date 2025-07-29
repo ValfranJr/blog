@@ -1,7 +1,8 @@
-import { getTopNoticias } from "@/lib/api/noticias";
+import { getArtigoSlug, getTopNoticias } from "@/lib/api/noticias";
 import { gerarSlug } from "@/lib/slug/slug";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import styles from "./slug.module.css";
 
 type Props = {
   params: {
@@ -9,32 +10,73 @@ type Props = {
   };
 };
 
-export default async function DetalheArtigo({ params }: Props) {
-  const urlOriginal = decodeURIComponent(params.slug);
+export const dynamic = "force-static";
+export const revalidate = 60;
 
+export async function generateStaticParams() {
+  const artigos = await getTopNoticias();
+
+  return artigos.map((artigo) => ({
+    slug: gerarSlug(artigo.title),
+  }));
+}
+
+
+export async function generateMetadata({params}: Props) {
+  const artigo = await getArtigoSlug(params.slug);
+  if (!artigo)
+    return;
+  return {
+    title: `${artigo?.title} | Blog News`,
+    description: artigo?.description,
+    openGraph: {
+      title: `${artigo?.title} | Blog News`,
+      description: artigo?.description,
+      images: [
+        {url: artigo?.urlToImage,alt: artigo?.title,
+        },
+      ],
+    },
+  };
+}
+
+const DetalheArtigo = async ({ params }: Props) => {
   const artigos = await getTopNoticias();
   const artigo = artigos.find((a) => gerarSlug(a.title) === params.slug);
 
   if (!artigo) return notFound();
 
   return (
-    <>
-      <Link href="/">← Voltar</Link>
-      <h1>{artigo.title}</h1>
-      <p>
-        <strong>Fonte:</strong> {artigo.source.name}
-      </p>
-      <p>
-        <strong>Autor:</strong> {artigo.author || "Desconhecido"}
-      </p>
-      {artigo.urlToImage && (
-        <img
-          src={artigo.urlToImage}
-          alt={artigo.title}
-          style={{ maxWidth: "600px", margin: "1rem 0" }}
-        />
-      )}
-      <p>{artigo.description}</p>
-    </>
+    <div className={styles.slug}>
+      <div className={styles.slug__container}>
+        <div className={styles.slug__voltar}>
+          <Link href="/">← Voltar</Link>
+        </div>
+        <section>
+          <h1 className={styles.slug__title}>{artigo.title}</h1>
+
+          <figure className={styles.slug__imagem}>
+            {artigo.urlToImage && (
+              <img
+                src={artigo.urlToImage}
+                alt={artigo.title}
+                style={{ maxWidth: "600px", margin: "1rem 0" }}
+              />
+            )}
+          </figure>
+          <p className={styles.slug__description}>
+            <strong>Fonte:</strong> {artigo.source.name}
+          </p>
+          <p className={styles.slug__description}>
+            <strong>Autor:</strong> {artigo.author || "Desconhecido"}
+          </p>
+          <p className={styles.slug__description}>
+            <strong>Sobre o assunto:</strong> {artigo.description}
+          </p>
+        </section>
+      </div>
+    </div>
   );
 };
+
+export default DetalheArtigo;
