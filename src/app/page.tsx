@@ -1,9 +1,13 @@
-import Image from "next/image";
-import styles from "./page.module.css";
+import Grid from "./components/Grid";
+import { getTopNoticias } from "@/lib/api/noticias";
 
-export default function Home() {
+export default async function Home() {
+  const artigos = await getTopNoticias();
   return (
     <>
+      <Grid
+        artigos= {artigos}
+      />
     </>
   );
 }
